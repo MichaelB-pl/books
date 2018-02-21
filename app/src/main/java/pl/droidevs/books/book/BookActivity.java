@@ -140,6 +140,8 @@ public class BookActivity extends AppCompatActivity {
         setupAnimations();
         setupViewModel();
         setupAppBarLayoutOffsetListener();
+
+
     }
 
     @Override
