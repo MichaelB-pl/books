@@ -1,4 +1,4 @@
-package pl.droidevs.books.library;
+package pl.droidevs.books.book;
 
 import android.animation.ValueAnimator;
 import android.arch.lifecycle.ViewModelProvider;

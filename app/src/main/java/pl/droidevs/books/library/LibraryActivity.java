@@ -40,6 +40,7 @@ import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
 import pl.droidevs.books.about.AboutActivity;
+import pl.droidevs.books.book.BookActivity;
 import pl.droidevs.books.exportimport.ExportFailedException;
 import pl.droidevs.books.exportimport.ExportImportViewModel;
 import pl.droidevs.books.model.Book;
@@ -50,14 +51,14 @@ import pl.droidevs.books.ui.SwipeCallback;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static pl.droidevs.books.library.BookActivity.BUNDLE_EXTRAS;
-import static pl.droidevs.books.library.BookActivity.EXTRAS_AUTHOR_TRANSITION_NAME;
-import static pl.droidevs.books.library.BookActivity.EXTRAS_BOOK_ID;
-import static pl.droidevs.books.library.BookActivity.EXTRAS_IMAGE_TRANSITION_NAME;
-import static pl.droidevs.books.library.BookActivity.EXTRAS_LAST_SELECTED_INDEX;
-import static pl.droidevs.books.library.BookActivity.EXTRAS_SHARED_AUTHOR_TEXT_SIZE;
-import static pl.droidevs.books.library.BookActivity.EXTRAS_SHARED_TITLE_TEXT_SIZE;
-import static pl.droidevs.books.library.BookActivity.EXTRAS_TITLE_TRANSITION_NAME;
+import static pl.droidevs.books.book.BookActivity.BUNDLE_EXTRAS;
+import static pl.droidevs.books.book.BookActivity.EXTRAS_AUTHOR_TRANSITION_NAME;
+import static pl.droidevs.books.book.BookActivity.EXTRAS_BOOK_ID;
+import static pl.droidevs.books.book.BookActivity.EXTRAS_IMAGE_TRANSITION_NAME;
+import static pl.droidevs.books.book.BookActivity.EXTRAS_LAST_SELECTED_INDEX;
+import static pl.droidevs.books.book.BookActivity.EXTRAS_SHARED_AUTHOR_TEXT_SIZE;
+import static pl.droidevs.books.book.BookActivity.EXTRAS_SHARED_TITLE_TEXT_SIZE;
+import static pl.droidevs.books.book.BookActivity.EXTRAS_TITLE_TRANSITION_NAME;
 
 public class LibraryActivity extends AppCompatActivity {
 

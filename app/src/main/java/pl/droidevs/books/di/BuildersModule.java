@@ -4,7 +4,7 @@ import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 import pl.droidevs.books.removebook.RemoveBookDialogFragment;
 import pl.droidevs.books.savebook.SaveBookActivity;
-import pl.droidevs.books.library.BookActivity;
+import pl.droidevs.books.book.BookActivity;
 import pl.droidevs.books.library.LibraryActivity;
 import pl.droidevs.books.login.LoginActivity;
 

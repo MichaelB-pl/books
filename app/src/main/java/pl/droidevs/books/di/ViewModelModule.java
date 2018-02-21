@@ -16,7 +16,7 @@ import dagger.multibindings.IntoMap;
 import pl.droidevs.books.removebook.RemoveBookViewModel;
 import pl.droidevs.books.savebook.SaveBookViewModel;
 import pl.droidevs.books.exportimport.ExportImportViewModel;
-import pl.droidevs.books.library.BookViewModel;
+import pl.droidevs.books.book.BookViewModel;
 import pl.droidevs.books.library.LibraryViewModel;
 import pl.droidevs.books.login.LoginViewModel;
 
