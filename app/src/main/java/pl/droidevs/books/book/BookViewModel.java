@@ -3,6 +3,8 @@ package pl.droidevs.books.book;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import pl.droidevs.books.model.Book;
@@ -21,4 +23,11 @@ public class BookViewModel extends ViewModel {
     LiveData<Book> getBook(BookId bookId) {
         return bookRepository.fetchBy(bookId);
     }
+
+    LiveData<List<Book>> getBooks() {
+        return bookRepository.fetchAll();
+    }
+
+    public float masterTitleTextSize;
+    public float masterAuthorTextSize;
 }

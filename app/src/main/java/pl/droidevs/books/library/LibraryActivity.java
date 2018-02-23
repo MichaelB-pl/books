@@ -51,14 +51,6 @@ import pl.droidevs.books.ui.SwipeCallback;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static pl.droidevs.books.book.BookActivity.BUNDLE_EXTRAS;
-import static pl.droidevs.books.book.BookActivity.EXTRAS_AUTHOR_TRANSITION_NAME;
-import static pl.droidevs.books.book.BookActivity.EXTRAS_BOOK_ID;
-import static pl.droidevs.books.book.BookActivity.EXTRAS_IMAGE_TRANSITION_NAME;
-import static pl.droidevs.books.book.BookActivity.EXTRAS_LAST_SELECTED_INDEX;
-import static pl.droidevs.books.book.BookActivity.EXTRAS_SHARED_AUTHOR_TEXT_SIZE;
-import static pl.droidevs.books.book.BookActivity.EXTRAS_SHARED_TITLE_TEXT_SIZE;
-import static pl.droidevs.books.book.BookActivity.EXTRAS_TITLE_TRANSITION_NAME;
 
 public class LibraryActivity extends AppCompatActivity {
 
@@ -112,29 +104,28 @@ public class LibraryActivity extends AppCompatActivity {
     public void onActivityReenter(int resultCode, Intent data) {
         super.onActivityReenter(resultCode, data);
 
-        setupAnimationForRecyclerViewItems(data.getBundleExtra(BUNDLE_EXTRAS));
+        setupAnimationForRecyclerViewItems(data.getIntExtra(BookActivity.EXTRAS_SELECTED_INDEX, -1));
     }
 
-    private void setupAnimationForRecyclerViewItems(Bundle bundle) {
-        int lastSelectedIndex = bundle.getInt(EXTRAS_LAST_SELECTED_INDEX, -1);
-
-        if (lastSelectedIndex >= 0) {
-            recyclerView.smoothScrollToPosition(lastSelectedIndex);
-            setExitSharedElementCallback(getExitSharedElementCallback(bundle, lastSelectedIndex));
+    private void setupAnimationForRecyclerViewItems(int selectedIndex) {
+        if (selectedIndex >= 0) {
+            recyclerView.smoothScrollToPosition(selectedIndex);
+            setExitSharedElementCallback(getExitSharedElementCallback(selectedIndex));
         }
     }
 
-    private SharedElementCallback getExitSharedElementCallback(Bundle bundle, int positionToScroll) {
+    private SharedElementCallback getExitSharedElementCallback(int selectedIndex) {
         return new SharedElementCallback() {
 
             @Override
             public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
-                LibraryAdapter.BookViewHolder viewHolder = (LibraryAdapter.BookViewHolder) recyclerView.findViewHolderForAdapterPosition(positionToScroll);
+                LibraryAdapter.BookViewHolder viewHolder = (LibraryAdapter.BookViewHolder) recyclerView.findViewHolderForAdapterPosition(selectedIndex);
 
                 if (viewHolder != null) {
-                    sharedElements.put(bundle.getString(EXTRAS_IMAGE_TRANSITION_NAME), viewHolder.ivBook);
-                    sharedElements.put(bundle.getString(EXTRAS_TITLE_TRANSITION_NAME), viewHolder.tvBookTitle);
-                    sharedElements.put(bundle.getString(EXTRAS_AUTHOR_TRANSITION_NAME), viewHolder.tvBookAuthor);
+                    sharedElements.clear();
+                    sharedElements.put(viewHolder.ivBook.getTransitionName(), viewHolder.ivBook);
+                    sharedElements.put(viewHolder.tvBookTitle.getTransitionName(), viewHolder.tvBookTitle);
+                    sharedElements.put(viewHolder.tvBookAuthor.getTransitionName(), viewHolder.tvBookAuthor);
                 }
             }
         };
@@ -142,33 +133,10 @@ public class LibraryActivity extends AppCompatActivity {
 
     private void setupAdapter() {
         adapter = new LibraryAdapter();
-        adapter.setItemClickListener((view, bookId, index) -> ActivityCompat.startActivityForResult(this,
-                createBookIntent(view, index, bookId),
+        adapter.setItemClickListener((view, bookId, index, listSize) -> ActivityCompat.startActivityForResult(this,
+                BookActivity.createBookIntent(this, bookId, index, listSize, view),
                 BOOK_REQUEST,
                 createBookActivityOptions(view).toBundle()));
-    }
-
-    private Intent createBookIntent(View view, int index, BookId bookId) {
-        Intent intent = new Intent(this, BookActivity.class);
-        intent.putExtra(BUNDLE_EXTRAS, createAnimationBundle(view, index));
-        intent.putExtra(EXTRAS_BOOK_ID, bookId);
-
-        return intent;
-    }
-
-    private Bundle createAnimationBundle(View view, int index) {
-        TextView tvTitle = view.findViewById(R.id.tv_book_title);
-        TextView tvAuthor = view.findViewById(R.id.tv_book_author);
-
-        Bundle animationBundle = new Bundle();
-        animationBundle.putString(EXTRAS_IMAGE_TRANSITION_NAME, view.findViewById(R.id.iv_book).getTransitionName());
-        animationBundle.putString(EXTRAS_TITLE_TRANSITION_NAME, view.findViewById(R.id.tv_book_title).getTransitionName());
-        animationBundle.putString(EXTRAS_AUTHOR_TRANSITION_NAME, view.findViewById(R.id.tv_book_author).getTransitionName());
-        animationBundle.putInt(EXTRAS_LAST_SELECTED_INDEX, index);
-        animationBundle.putFloat(EXTRAS_SHARED_TITLE_TEXT_SIZE, tvTitle.getTextSize());
-        animationBundle.putFloat(EXTRAS_SHARED_AUTHOR_TEXT_SIZE, tvAuthor.getTextSize());
-
-        return animationBundle;
     }
 
     private ActivityOptionsCompat createBookActivityOptions(View view) {

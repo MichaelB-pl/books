@@ -20,6 +20,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import pl.droidevs.books.R;
+import pl.droidevs.books.book.BooksAdapter;
 import pl.droidevs.books.model.Book;
 import pl.droidevs.books.model.BookId;
 
@@ -71,7 +72,7 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
 
     @FunctionalInterface
     public interface BookItemClickListener {
-        void onBookClicked(@NonNull View view, @NonNull BookId bookId, @NonNull Integer index);
+        void onBookClicked(@NonNull View view, @NonNull BookId bookId, @NonNull Integer index, @NonNull Integer listSize);
     }
 
     @FunctionalInterface
@@ -79,7 +80,7 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
         void onBookRemoved(@NonNull Book book);
     }
 
-    static final class BookViewHolder extends RecyclerView.ViewHolder {
+    final class BookViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.tv_book_title)
         TextView tvBookTitle;
@@ -96,7 +97,7 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(view -> {
                 if (onClickListener != null && bookId != null) {
-                    onClickListener.onBookClicked(itemView, bookId, getAdapterPosition());
+                    onClickListener.onBookClicked(itemView, bookId, getAdapterPosition(), books.size());
                 }
             });
         }

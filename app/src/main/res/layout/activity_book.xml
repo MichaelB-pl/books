@@ -6,7 +6,12 @@
     android:layout_height="match_parent"
     tools:context="pl.droidevs.books.book.BookActivity">
 
-    <android.support.design.widget.AppBarLayout
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vp_books"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <!--<android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/collapsing_app_bar_layout_height"
@@ -46,7 +51,7 @@
                 android:layout_height="?actionBarSize"
                 android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar"
                 app:layout_collapseMode="pin">
-                <!--app:navigationIcon="@drawable/ic_arrow_back_white"-->
+                &lt;!&ndash;app:navigationIcon="@drawable/ic_arrow_back_white"&ndash;&gt;
 
             </android.support.v7.widget.Toolbar>
 
@@ -194,6 +199,6 @@
                 android:layout_marginTop="@dimen/spacing_normal"
                 tools:text="@string/lorem_ipsum_511" />
         </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
+    </android.support.v4.widget.NestedScrollView>-->
 
 </android.support.design.widget.CoordinatorLayout>
