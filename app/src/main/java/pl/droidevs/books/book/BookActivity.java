@@ -7,10 +7,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.graphics.ColorUtils;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -100,6 +104,23 @@ public class BookActivity extends AppCompatActivity {
         adapter = new BooksAdapter(getSupportFragmentManager(), this, listSize);
 
         vpBooks.setAdapter(adapter);
+        vpBooks.setPageTransformer(false, new BookPageTransformer());
+        vpBooks.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+                if (positionOffset < 1f && position > 0f) {
+                    BookFragment leftFragment = getFragmentByPosition(position);
+                    BookFragment rightFragment = getFragmentByPosition(position + 1);
+                    if (leftFragment != null && rightFragment != null) {
+                        int color1 = leftFragment.getStatusBarColor();
+                        int color2 = rightFragment.getStatusBarColor();
+                        int desiredColor = ColorUtils.blendARGB(color1, color2, positionOffset);
+                        getWindow().setStatusBarColor(desiredColor);
+                    }
+                }
+            }
+        });
         ActivityCompat.postponeEnterTransition(this);
         vpBooks.postDelayed(() -> {
             ActivityCompat.startPostponedEnterTransition(this);
@@ -113,7 +134,7 @@ public class BookActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
 
         outState.putInt(EXTRAS_SELECTED_INDEX, vpBooks.getCurrentItem());
-        outState.putInt(EXTRAS_LIST_SIZE, viewModel.getBooks().getValue().size());
+        outState.putInt(EXTRAS_LIST_SIZE, adapter.getCount());
 
         Bundle animationBundle = new Bundle();
         animationBundle.putFloat(EXTRAS_SHARED_TITLE_TEXT_SIZE, viewModel.masterTitleTextSize);
@@ -141,5 +162,20 @@ public class BookActivity extends AppCompatActivity {
 
     public Book getBook(int position) {
         return adapter.getBook(position);
+    }
+
+    public BookFragment getFragmentByPosition(int position) {
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        String desiredTag = "index_" + position;
+        for (Fragment fragment : fragments) {
+            if (fragment instanceof BookFragment) {
+                BookFragment bookFragment = (BookFragment) fragment;
+                String tag = (bookFragment).TAG;
+                if (tag.equals(desiredTag)) {
+                    return bookFragment;
+                }
+            }
+        }
+        return null;
     }
 }

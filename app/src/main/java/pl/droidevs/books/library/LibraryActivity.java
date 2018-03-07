@@ -102,9 +102,9 @@ public class LibraryActivity extends AppCompatActivity {
 
     @Override
     public void onActivityReenter(int resultCode, Intent data) {
-        super.onActivityReenter(resultCode, data);
 
         setupAnimationForRecyclerViewItems(data.getIntExtra(BookActivity.EXTRAS_SELECTED_INDEX, -1));
+        super.onActivityReenter(resultCode, data);
     }
 
     private void setupAnimationForRecyclerViewItems(int selectedIndex) {
@@ -126,6 +126,15 @@ public class LibraryActivity extends AppCompatActivity {
                     sharedElements.put(viewHolder.ivBook.getTransitionName(), viewHolder.ivBook);
                     sharedElements.put(viewHolder.tvBookTitle.getTransitionName(), viewHolder.tvBookTitle);
                     sharedElements.put(viewHolder.tvBookAuthor.getTransitionName(), viewHolder.tvBookAuthor);
+
+                    names.clear();
+                    names.add(viewHolder.ivBook.getTransitionName());
+                    names.add(viewHolder.tvBookTitle.getTransitionName());
+                    names.add(viewHolder.tvBookAuthor.getTransitionName());
+
+
+                    int b = 5 + 6;
+                    setExitSharedElementCallback((SharedElementCallback) null);
                 }
             }
         };

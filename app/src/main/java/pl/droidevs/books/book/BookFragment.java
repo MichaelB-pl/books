@@ -57,6 +57,8 @@ public class BookFragment extends Fragment {
 
     private static final int EDIT_BOOK_REQUEST_CODE = 205;
 
+    public final String TAG;
+
     //region AppBarLayoutOffset
     private static final double APP_BAR_MAX_COLLEPSED_SCROLL_PERCENT_VALUE = 0.4;
     private static final double APP_BAR_MIN_EXPANDED_SCROLL_PERCENT_VALUE = 1.0 - APP_BAR_MAX_COLLEPSED_SCROLL_PERCENT_VALUE;
@@ -114,11 +116,19 @@ public class BookFragment extends Fragment {
     //endregion
 
     public static BookFragment newInstance(int position) {
-        BookFragment fragment = new BookFragment();
+        BookFragment fragment = new BookFragment(position);
         Bundle args = new Bundle();
         args.putInt(EXTRAS_POSITION, position);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public BookFragment() {
+        TAG = "index_";
+    }
+
+    private BookFragment(int position) {
+        TAG = "index_" + position;
     }
 
     @Nullable
