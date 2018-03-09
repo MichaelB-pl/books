@@ -28,8 +28,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -82,6 +84,7 @@ public class LibraryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_library);
+        postponeEnterTransition();
 
         AndroidInjection.inject(this);
         ButterKnife.bind(this);
@@ -102,14 +105,22 @@ public class LibraryActivity extends AppCompatActivity {
 
     @Override
     public void onActivityReenter(int resultCode, Intent data) {
-
-        setupAnimationForRecyclerViewItems(data.getIntExtra(BookActivity.EXTRAS_SELECTED_INDEX, -1));
-        super.onActivityReenter(resultCode, data);
+//        super.onActivityReenter(resultCode, data);
+        postponeEnterTransition();
+        recyclerView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                recyclerView.getViewTreeObserver().removeOnPreDrawListener(this);
+                startPostponedEnterTransition();
+                return true;
+            }
+        });
+        setupAnimationForRecyclerViewItems(data.getIntExtra(BookActivity.EXTRAS_SELECTED_INDEX, 0));
     }
 
     private void setupAnimationForRecyclerViewItems(int selectedIndex) {
         if (selectedIndex >= 0) {
-            recyclerView.smoothScrollToPosition(selectedIndex);
+            recyclerView.scrollToPosition(selectedIndex);
             setExitSharedElementCallback(getExitSharedElementCallback(selectedIndex));
         }
     }
@@ -119,10 +130,17 @@ public class LibraryActivity extends AppCompatActivity {
 
             @Override
             public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+                removeObsoleteElements(names, sharedElements, mapObsoleteElements(names));
+
+
                 LibraryAdapter.BookViewHolder viewHolder = (LibraryAdapter.BookViewHolder) recyclerView.findViewHolderForAdapterPosition(selectedIndex);
 
                 if (viewHolder != null) {
-                    sharedElements.clear();
+                    mapSharedElement(names, sharedElements, viewHolder.ivBook);
+                    mapSharedElement(names, sharedElements, viewHolder.tvBookTitle);
+                    mapSharedElement(names, sharedElements, viewHolder.tvBookAuthor);
+
+                    /*sharedElements.clear();
                     sharedElements.put(viewHolder.ivBook.getTransitionName(), viewHolder.ivBook);
                     sharedElements.put(viewHolder.tvBookTitle.getTransitionName(), viewHolder.tvBookTitle);
                     sharedElements.put(viewHolder.tvBookAuthor.getTransitionName(), viewHolder.tvBookAuthor);
@@ -130,12 +148,43 @@ public class LibraryActivity extends AppCompatActivity {
                     names.clear();
                     names.add(viewHolder.ivBook.getTransitionName());
                     names.add(viewHolder.tvBookTitle.getTransitionName());
-                    names.add(viewHolder.tvBookAuthor.getTransitionName());
+                    names.add(viewHolder.tvBookAuthor.getTransitionName());*/
 
+                    /*ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(this,
+                            new Pair<>(viewHolder.ivBook.getTransitionName(), viewHolder.ivBook),
+                            new Pair<>(viewHolder.tvBookTitle.getTransitionName(), viewHolder.tvBookTitle),
+                            new Pair<>(viewHolder.tvBookAuthor.getTransitionName(), viewHolder.tvBookAuthor));*/
 
-                    int b = 5 + 6;
+//                    int b = 5 + 6;
                     setExitSharedElementCallback((SharedElementCallback) null);
                 }
+            }
+
+            private void removeObsoleteElements(List<String> names,
+                                                Map<String, View> sharedElements,
+                                                List<String> elementsToRemove) {
+                if (elementsToRemove.size() > 0) {
+                    names.removeAll(elementsToRemove);
+                    for (String elementToRemove : elementsToRemove) {
+                        sharedElements.remove(elementToRemove);
+                    }
+                }
+            }
+
+            @NonNull
+            private List<String> mapObsoleteElements(List<String> names) {
+                List<String> elementsToRemove = new ArrayList<>(names.size());
+                for (String name : names) {
+                    if (name.startsWith("android")) continue;
+                    elementsToRemove.add(name);
+                }
+                return elementsToRemove;
+            }
+
+            private void mapSharedElement(List<String> names, Map<String, View> sharedElements, View view) {
+                String transitionName = view.getTransitionName();
+                names.add(transitionName);
+                sharedElements.put(transitionName, view);
             }
         };
     }

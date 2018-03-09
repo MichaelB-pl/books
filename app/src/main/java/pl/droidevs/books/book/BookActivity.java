@@ -81,6 +81,7 @@ public class BookActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book);
+        postponeEnterTransition();
 
         AndroidInjection.inject(this);
         ButterKnife.bind(this);
@@ -121,11 +122,20 @@ public class BookActivity extends AppCompatActivity {
                 }
             }
         });
-        ActivityCompat.postponeEnterTransition(this);
-        vpBooks.postDelayed(() -> {
+        vpBooks.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+                if (vpBooks.getChildCount() > 0) {
+                    vpBooks.removeOnLayoutChangeListener(this);
+                    startPostponedEnterTransition();
+                    adapter.getCurrentFragment().setEnterTransition();
+                }
+            }
+        });
+        /*vpBooks.postDelayed(() -> {
             ActivityCompat.startPostponedEnterTransition(this);
             adapter.getCurrentFragment().setEnterTransition();
-        }, 10);
+        }, 10);*/
         vpBooks.setCurrentItem(selectedIndex);
     }
 
@@ -164,7 +174,7 @@ public class BookActivity extends AppCompatActivity {
         return adapter.getBook(position);
     }
 
-    public BookFragment getFragmentByPosition(int position) {
+    private BookFragment getFragmentByPosition(int position) {
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
         String desiredTag = "index_" + position;
         for (Fragment fragment : fragments) {
